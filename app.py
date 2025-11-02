@@ -8,8 +8,11 @@ import threading
 import time
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Load environment variables (only if .env file exists)
+try:
+    load_dotenv()
+except:
+    pass  # In production, environment variables are set by the platform
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend integration
@@ -210,4 +213,6 @@ def stream_responses(message, models):
                 yield f"data: {json.dumps({'status': 'processing'})}\n\n"
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    debug = os.environ.get('FLASK_ENV') != 'production'
+    app.run(debug=debug, host='0.0.0.0', port=port)
