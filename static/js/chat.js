@@ -113,6 +113,9 @@ function formatMessage(text) {
             const langIcon = getLanguageIcon(language);
             const langDisplay = getLanguageDisplay(language);
 
+            // Clean and format the code for better vertical display
+            const cleanCode = code.trim();
+
             return `<div class="code-block-wrapper">
                 <div class="code-header">
                     <div class="language-label">
@@ -120,13 +123,13 @@ function formatMessage(text) {
                         <span>${langDisplay}</span>
                     </div>
                     <button class="copy-button" onclick="copyCode('${codeId}')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
                         </svg>
-                        Copy
+                        Copy Code
                     </button>
                 </div>
-                <pre><code id="${codeId}" class="language-${language}">${code.trim()}</code></pre>
+                <pre><code id="${codeId}" class="language-${language}">${cleanCode}</code></pre>
             </div>`;
         })
         // Handle inline code (`code`)
@@ -229,25 +232,44 @@ function getLanguageDisplay(lang) {
     return displays[lang.toLowerCase()] || lang.toUpperCase();
 }
 
-// Copy code to clipboard
+// Copy code to clipboard with beautiful feedback
 function copyCode(codeId) {
     const codeElement = document.getElementById(codeId);
     if (codeElement) {
         const text = codeElement.textContent;
         navigator.clipboard.writeText(text).then(() => {
-            // Show feedback
+            // Show beautiful feedback
             const button = codeElement.parentElement.parentElement.querySelector('.copy-button');
             const originalHTML = button.innerHTML;
-            button.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+
+            button.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
             </svg> Copied!`;
             button.classList.add('copied');
+
+            // Add a subtle animation
+            button.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 150);
+
             setTimeout(() => {
                 button.innerHTML = originalHTML;
                 button.classList.remove('copied');
-            }, 2000);
+            }, 2500);
         }).catch(err => {
             console.error('Failed to copy code:', err);
+            // Show error feedback
+            const button = codeElement.parentElement.parentElement.querySelector('.copy-button');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+            </svg> Failed`;
+            button.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.style.background = '';
+            }, 2000);
         });
     }
 }
