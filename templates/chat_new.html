@@ -90,41 +90,93 @@
             }
         }
 
-        /* Code block styling */
+        /* Enhanced Code block styling */
         .message-content pre {
-            background: #2d3748 !important;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 8px 0;
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%) !important;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 12px 0;
             overflow-x: auto;
             position: relative;
+            border: 1px solid #4a5568;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .code-block-wrapper {
             position: relative;
+            margin: 12px 0;
+        }
+
+        .code-header {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 8px 8px 0 0;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1a202c;
+        }
+
+        .language-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .copy-button {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #4a5568;
+            background: #6366f1;
             color: white;
             border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
+            padding: 6px 12px;
+            border-radius: 6px;
             font-size: 0.75rem;
             cursor: pointer;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .code-block-wrapper:hover .copy-button {
-            opacity: 1;
+            transition: all 0.2s;
+            font-weight: 500;
         }
 
         .copy-button:hover {
-            background: #2d3748;
+            background: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+        }
+
+        .copy-button.copied {
+            background: #10b981;
+        }
+
+        .code-block-wrapper pre {
+            margin: 0;
+            border-radius: 0 0 8px 8px;
+        }
+
+        /* Language-specific icons */
+        .lang-icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Coding model badges */
+        .coding-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .best-for-coding {
+            border: 2px solid #10b981;
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        }
+
+        .dark .best-for-coding {
+            background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
         }
 
         .message-content code {
@@ -264,13 +316,57 @@
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Select models to chat with</p>
 
                 <div class="space-y-4">
-                    <!-- Core Models -->
+                    <!-- Best for Coding -->
                     <div class="space-y-2">
-                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Core
-                            Models</h3>
+                        <h3
+                            class="text-sm font-semibold text-emerald-700 dark:text-emerald-300 uppercase tracking-wide flex items-center">
+                            <span class="mr-2">💻</span> Best for Coding
+                        </h3>
 
                         <label
-                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors best-for-coding">
+                            <input type="checkbox" checked
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_qwen3-coder:480b-cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900 dark:to-indigo-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">💻</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white flex items-center">
+                                        Qwen3 Coder
+                                        <span class="coding-badge">TOP CODER</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">480B - Specialized for code
+                                        generation</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors best-for-coding">
+                            <input type="checkbox" checked
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_deepseek-v3.1:671b-cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">🧠</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white flex items-center">
+                                        DeepSeek V3.1
+                                        <span class="coding-badge">REASONING</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">671B - Advanced code reasoning
+                                        & debugging</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors best-for-coding">
                             <input type="checkbox" checked
                                 class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
                                 data-model="mistral">
@@ -280,11 +376,23 @@
                                     <span class="text-sm">🤖</span>
                                 </div>
                                 <div>
-                                    <div class="font-medium text-gray-900 dark:text-white">Mistral AI</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">Medium Latest</div>
+                                    <div class="font-medium text-gray-900 dark:text-white flex items-center">
+                                        Mistral AI
+                                        <span class="coding-badge">VERSATILE</span>
+                                    </div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Excellent for code explanation
+                                        & documentation</div>
                                 </div>
                             </div>
                         </label>
+                    </div>
+
+                    <!-- General Purpose Models -->
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                            General Purpose</h3>
+
+
 
                         <label
                             class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
@@ -309,22 +417,7 @@
                         <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
                             Ollama Cloud</h3>
 
-                        <label
-                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
-                            <input type="checkbox"
-                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
-                                data-model="ollama_deepseek-v3.1:671b-cloud">
-                            <div class="ml-3 flex items-center">
-                                <div
-                                    class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-lg flex items-center justify-center mr-3">
-                                    <span class="text-sm">🧠</span>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900 dark:text-white">DeepSeek V3.1</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">671B</div>
-                                </div>
-                            </div>
-                        </label>
+
 
                         <label
                             class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
@@ -377,22 +470,7 @@
                             </div>
                         </label>
 
-                        <label
-                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
-                            <input type="checkbox"
-                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
-                                data-model="ollama_qwen3-coder:480b-cloud">
-                            <div class="ml-3 flex items-center">
-                                <div
-                                    class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900 dark:to-indigo-800 rounded-lg flex items-center justify-center mr-3">
-                                    <span class="text-sm">💻</span>
-                                </div>
-                                <div>
-                                    <div class="font-medium text-gray-900 dark:text-white">Qwen3 Coder</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">480B</div>
-                                </div>
-                            </div>
-                        </label>
+
 
                         <label
                             class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
@@ -480,7 +558,8 @@
                 <div class="flex items-center justify-between">
                     <h1 class="text-xl font-semibold text-gray-900 dark:text-white">AI Chat</h1>
                     <div class="flex items-center space-x-4">
-                        <span id="selected-count" class="text-sm text-primary font-medium">2 models selected</span>
+                        <span id="selected-count" class="text-sm text-primary font-medium">3 coding models
+                            selected</span>
                         <button id="stream-toggle" class="px-3 py-1 text-xs bg-primary text-white rounded-full">
                             Streaming ON
                         </button>

@@ -78,8 +78,8 @@ const MODEL_ICONS = {
     'openrouter_minimax': '🎯'
 };
 
-// Chat functionality
-let selectedModels = ['mistral', 'glm'];
+// Chat functionality - Default to best coding models
+let selectedModels = ['mistral', 'ollama_qwen3-coder:480b-cloud', 'ollama_deepseek-v3.1:671b-cloud'];
 let messageHistory = [];
 let streamingEnabled = true;
 
@@ -110,8 +110,22 @@ function formatMessage(text) {
         .replace(/```(\w+)?\n?([\s\S]*?)```/g, (match, lang, code) => {
             const language = lang || 'text';
             const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
+            const langIcon = getLanguageIcon(language);
+            const langDisplay = getLanguageDisplay(language);
+
             return `<div class="code-block-wrapper">
-                <button class="copy-button" onclick="copyCode('${codeId}')">Copy</button>
+                <div class="code-header">
+                    <div class="language-label">
+                        <span class="lang-icon">${langIcon}</span>
+                        <span>${langDisplay}</span>
+                    </div>
+                    <button class="copy-button" onclick="copyCode('${codeId}')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                        </svg>
+                        Copy
+                    </button>
+                </div>
                 <pre><code id="${codeId}" class="language-${language}">${code.trim()}</code></pre>
             </div>`;
         })
@@ -144,6 +158,77 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Get language icon
+function getLanguageIcon(lang) {
+    const icons = {
+        'html': '🌐',
+        'css': '🎨',
+        'javascript': '⚡',
+        'js': '⚡',
+        'python': '🐍',
+        'py': '🐍',
+        'java': '☕',
+        'cpp': '⚙️',
+        'c': '⚙️',
+        'php': '🐘',
+        'ruby': '💎',
+        'go': '🐹',
+        'rust': '🦀',
+        'swift': '🍎',
+        'kotlin': '🎯',
+        'typescript': '📘',
+        'ts': '📘',
+        'sql': '🗄️',
+        'json': '📋',
+        'xml': '📄',
+        'yaml': '📝',
+        'yml': '📝',
+        'bash': '💻',
+        'shell': '💻',
+        'powershell': '💙',
+        'dockerfile': '🐳',
+        'markdown': '📖',
+        'md': '📖'
+    };
+    return icons[lang.toLowerCase()] || '📄';
+}
+
+// Get language display name
+function getLanguageDisplay(lang) {
+    const displays = {
+        'html': 'HTML',
+        'css': 'CSS',
+        'javascript': 'JavaScript',
+        'js': 'JavaScript',
+        'python': 'Python',
+        'py': 'Python',
+        'java': 'Java',
+        'cpp': 'C++',
+        'c': 'C',
+        'php': 'PHP',
+        'ruby': 'Ruby',
+        'go': 'Go',
+        'rust': 'Rust',
+        'swift': 'Swift',
+        'kotlin': 'Kotlin',
+        'typescript': 'TypeScript',
+        'ts': 'TypeScript',
+        'sql': 'SQL',
+        'json': 'JSON',
+        'xml': 'XML',
+        'yaml': 'YAML',
+        'yml': 'YAML',
+        'bash': 'Bash',
+        'shell': 'Shell',
+        'powershell': 'PowerShell',
+        'dockerfile': 'Dockerfile',
+        'markdown': 'Markdown',
+        'md': 'Markdown',
+        'text': 'Plain Text'
+    };
+    return displays[lang.toLowerCase()] || lang.toUpperCase();
+}
+
 // Copy code to clipboard
 function copyCode(codeId) {
     const codeElement = document.getElementById(codeId);
@@ -151,11 +236,15 @@ function copyCode(codeId) {
         const text = codeElement.textContent;
         navigator.clipboard.writeText(text).then(() => {
             // Show feedback
-            const button = codeElement.parentElement.querySelector('.copy-button');
-            const originalText = button.textContent;
-            button.textContent = 'Copied!';
+            const button = codeElement.parentElement.parentElement.querySelector('.copy-button');
+            const originalHTML = button.innerHTML;
+            button.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg> Copied!`;
+            button.classList.add('copied');
             setTimeout(() => {
-                button.textContent = originalText;
+                button.innerHTML = originalHTML;
+                button.classList.remove('copied');
             }, 2000);
         }).catch(err => {
             console.error('Failed to copy code:', err);
