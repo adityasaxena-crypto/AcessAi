@@ -19,6 +19,13 @@ CORS(app)  # Enable CORS for frontend integration
 
 @app.route('/')
 def index():
+    # Redirect directly to chat instead of landing page
+    from flask import redirect, url_for
+    return redirect(url_for('chat'))
+
+@app.route('/landing')
+def landing():
+    # Optional landing page route for those who want to see it
     return render_template('index_new.html')
 
 # API Keys from environment variables

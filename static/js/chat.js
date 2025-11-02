@@ -3,8 +3,8 @@ const themeToggle = document.getElementById('theme-toggle');
 const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
 const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
 
-// Check for saved theme preference or default to 'light' mode
-const currentTheme = localStorage.getItem('theme') || 'light';
+// Check for saved theme preference or default to 'dark' mode
+const currentTheme = localStorage.getItem('theme') || 'dark';
 
 if (currentTheme === 'dark') {
     document.documentElement.classList.add('dark');
