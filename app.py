@@ -32,6 +32,8 @@ def landing():
 MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
 GLM_API_KEY = os.getenv('GLM_API_KEY')
 OLLAMA_API_KEY = os.getenv('OLLAMA_API_KEY')
+OPENROUTER_API_KEY_1 = os.getenv('OPENROUTER_API_KEY_1', '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')
+OPENROUTER_API_KEY_2 = os.getenv('OPENROUTER_API_KEY_2', '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')
 
 # Check if API keys are loaded
 if not MISTRAL_API_KEY:
@@ -40,6 +42,10 @@ if not GLM_API_KEY:
     print("Warning: GLM_API_KEY not found in environment variables")
 if not OLLAMA_API_KEY:
     print("Warning: OLLAMA_API_KEY not found in environment variables")
+if not OPENROUTER_API_KEY_1:
+    print("Warning: OPENROUTER_API_KEY_1 not found in environment variables")
+if not OPENROUTER_API_KEY_2:
+    print("Warning: OPENROUTER_API_KEY_2 not found in environment variables")
 
 def query_mistral(message):
     """Query Mistral AI API"""
@@ -92,6 +98,11 @@ OLLAMA_MODELS = {
     'glm-4.6:cloud': 'GLM 4.6'
 }
 
+OPENROUTER_MODELS = {
+    'nvidia/nemotron-nano-12b-v2-vl:free': 'NVIDIA Nemotron Nano (Vision)',
+    'minimax/minimax-m2:free': 'MiniMax M2'
+}
+
 def query_ollama(message, model_name):
     """Query specific Ollama Cloud model"""
     if not OLLAMA_API_KEY:
@@ -121,6 +132,56 @@ def query_ollama(message, model_name):
 
     except Exception as e:
         return f"Error querying {OLLAMA_MODELS.get(model_name, model_name)}: {str(e)}"
+
+def query_openrouter_nemotron(message):
+    """Query NVIDIA Nemotron Nano model via OpenRouter"""
+    if not OPENROUTER_API_KEY_1:
+        return "Error: OpenRouter API key 1 not configured"
+    
+    try:
+        url = 'https://openrouter.ai/api/v1/chat/completions'
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {OPENROUTER_API_KEY_1}'
+        }
+        data = {
+            "model": "nvidia/nemotron-nano-12b-v2-vl:free",
+            "messages": [{"role": "user", "content": message}]
+        }
+        
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            result = response.json()
+            return result.get('choices', [{}])[0].get('message', {}).get('content', 'No response from NVIDIA Nemotron')
+        else:
+            return f"Error querying NVIDIA Nemotron: {response.text}"
+    except Exception as e:
+        return f"Error querying NVIDIA Nemotron: {str(e)}"
+
+def query_openrouter_minimax(message):
+    """Query MiniMax M2 model via OpenRouter"""
+    if not OPENROUTER_API_KEY_2:
+        return "Error: OpenRouter API key 2 not configured"
+    
+    try:
+        url = 'https://openrouter.ai/api/v1/chat/completions'
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'Bearer {OPENROUTER_API_KEY_2}'
+        }
+        data = {
+            "model": "minimax/minimax-m2:free",
+            "messages": [{"role": "user", "content": message}]
+        }
+        
+        response = requests.post(url, headers=headers, json=data)
+        if response.status_code == 200:
+            result = response.json()
+            return result.get('choices', [{}])[0].get('message', {}).get('content', 'No response from MiniMax M2')
+        else:
+            return f"Error querying MiniMax M2: {response.text}"
+    except Exception as e:
+        return f"Error querying MiniMax M2: {str(e)}"
 
 @app.route('/chat')
 def chat():
@@ -153,6 +214,13 @@ def query_apis():
                 results[f'ollama_{model_key}'] = query_ollama(message, model_key)
             elif models.get(model_key):  # Direct model name format
                 results[model_key] = query_ollama(message, model_key)
+        
+        # Handle OpenRouter models
+        if models.get('openrouter_nemotron'):
+            results['openrouter_nemotron'] = query_openrouter_nemotron(message)
+        
+        if models.get('openrouter_minimax'):
+            results['openrouter_minimax'] = query_openrouter_minimax(message)
     else:
         # Old format (array) for backward compatibility
         if 'mistral' in models:
@@ -182,6 +250,10 @@ def stream_responses(message, models):
             elif model_key.startswith('ollama_'):
                 actual_model = model_key.replace('ollama_', '')
                 result = query_ollama(message, actual_model)
+            elif model_key == 'openrouter_nemotron':
+                result = query_openrouter_nemotron(message)
+            elif model_key == 'openrouter_minimax':
+                result = query_openrouter_minimax(message)
             else:
                 result = f"Unknown model: {model_key}"
             

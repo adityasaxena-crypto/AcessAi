@@ -59,7 +59,9 @@ const MODEL_NAMES = {
     'ollama_gpt-oss:120b-cloud': 'GPT-OSS (120B)',
     'ollama_kimi-k2:1t-cloud': 'Kimi K2 (1T)',
     'ollama_qwen3-coder:480b-cloud': 'Qwen3 Coder (480B)',
-    'ollama_glm-4.6:cloud': 'GLM 4.6'
+    'ollama_glm-4.6:cloud': 'GLM 4.6',
+    'openrouter_nemotron': 'NVIDIA Nemotron (Vision)',
+    'openrouter_minimax': 'MiniMax M2'
 };
 
 // Model icons for display
@@ -71,7 +73,9 @@ const MODEL_ICONS = {
     'ollama_gpt-oss:120b-cloud': '🚀',
     'ollama_kimi-k2:1t-cloud': '⭐',
     'ollama_qwen3-coder:480b-cloud': '💻',
-    'ollama_glm-4.6:cloud': '🔥'
+    'ollama_glm-4.6:cloud': '🔥',
+    'openrouter_nemotron': '👁️',
+    'openrouter_minimax': '🎯'
 };
 
 // Chat functionality
