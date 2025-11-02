@@ -83,6 +83,86 @@ let selectedModels = ['mistral', 'glm'];
 let messageHistory = [];
 let streamingEnabled = true;
 
+// Configure marked for better code rendering
+if (typeof marked !== 'undefined') {
+    marked.setOptions({
+        highlight: function (code, lang) {
+            if (typeof Prism !== 'undefined' && lang && Prism.languages[lang]) {
+                return Prism.highlight(code, Prism.languages[lang], lang);
+            }
+            return code;
+        },
+        breaks: true,
+        gfm: true
+    });
+}
+
+// Format message with safe markdown and code highlighting
+function formatMessage(text) {
+    if (!text) return 'No response received';
+
+    // First escape all HTML to prevent XSS attacks
+    let safeText = escapeHtml(text);
+
+    // Then apply safe markdown formatting
+    let formatted = safeText
+        // Handle code blocks (```code```)
+        .replace(/```(\w+)?\n?([\s\S]*?)```/g, (match, lang, code) => {
+            const language = lang || 'text';
+            const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
+            return `<div class="code-block-wrapper">
+                <button class="copy-button" onclick="copyCode('${codeId}')">Copy</button>
+                <pre><code id="${codeId}" class="language-${language}">${code.trim()}</code></pre>
+            </div>`;
+        })
+        // Handle inline code (`code`)
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // Handle bold text (**text**)
+        .replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+        // Handle italic text (*text*)
+        .replace(/\*([^*\n]+)\*/g, '<em>$1</em>')
+        // Handle headers
+        .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+        // Handle lists
+        .replace(/^\* (.+)$/gm, '<li>$1</li>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        // Handle line breaks
+        .replace(/\n/g, '<br>');
+
+    // Wrap list items in ul tags
+    formatted = formatted.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+
+    return formatted;
+}
+
+// Escape HTML to prevent XSS
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Copy code to clipboard
+function copyCode(codeId) {
+    const codeElement = document.getElementById(codeId);
+    if (codeElement) {
+        const text = codeElement.textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            // Show feedback
+            const button = codeElement.parentElement.querySelector('.copy-button');
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy code:', err);
+        });
+    }
+}
+
 // DOM elements
 const messagesContainer = document.getElementById('messages');
 const messageInput = document.getElementById('message-input');
@@ -258,14 +338,18 @@ async function sendBatchMessage(message) {
 
         // Display responses
         Object.keys(results).forEach(modelKey => {
-            if (results[modelKey]) {
-                displayMessage('ai', results[modelKey], [modelKey]);
+            const response = results[modelKey];
+            if (response && response !== 'undefined' && response.trim() !== '') {
+                displayMessage('ai', response, [modelKey]);
                 messageHistory.push({
                     user: 'ai',
-                    text: results[modelKey],
+                    text: response,
                     model: modelKey,
                     timestamp: new Date()
                 });
+            } else {
+                console.warn(`Empty or invalid response from ${modelKey}:`, response);
+                displayMessage('ai', `No response received from ${MODEL_NAMES[modelKey] || modelKey}`, [modelKey]);
             }
         });
 
@@ -295,28 +379,36 @@ function displayStreamingResponse(data) {
                 ${data.status === 'complete' ? 'Complete' : 'Processing...'}
             </span>
         </div>
-        <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">${data.response}</p>
+        <div class="text-sm text-gray-700 dark:text-gray-300 message-content">${formatMessage(data.response)}</div>
     `;
 
     liveResponses.appendChild(responseDiv);
+
+    // Highlight code blocks if Prism is available
+    if (typeof Prism !== 'undefined') {
+        Prism.highlightAllUnder(responseDiv);
+    }
 }
 
 function displayMessage(sender, text, models = []) {
     const messageDiv = document.createElement('div');
     messageDiv.className = 'chat-message flex space-x-4';
 
+    // Ensure text is not undefined
+    const safeText = text || 'No response received';
+
     if (sender === 'user') {
         messageDiv.className += ' justify-end';
         messageDiv.innerHTML = `
             <div class="max-w-xs lg:max-w-md xl:max-w-lg">
                 <div class="bg-primary text-white rounded-lg rounded-br-sm px-4 py-2">
-                    <p class="text-sm">${text}</p>
+                    <p class="text-sm">${safeText}</p>
                 </div>
             </div>
         `;
     } else {
-        const modelName = models.length === 1 ? MODEL_NAMES[models[0]] : 'AI Assistant';
-        const modelIcon = models.length === 1 ? MODEL_ICONS[models[0]] : '🤖';
+        const modelName = models.length === 1 ? (MODEL_NAMES[models[0]] || models[0] || 'AI Assistant') : 'AI Assistant';
+        const modelIcon = models.length === 1 ? (MODEL_ICONS[models[0]] || '🤖') : '🤖';
 
         messageDiv.innerHTML = `
             <div class="flex-shrink-0">
@@ -329,13 +421,19 @@ function displayMessage(sender, text, models = []) {
                     <span class="font-semibold text-gray-900 dark:text-white text-sm">${modelName}</span>
                 </div>
                 <div class="bg-white dark:bg-gray-700 rounded-lg rounded-bl-sm px-4 py-3 border border-gray-200 dark:border-gray-600">
-                    <p class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap">${text}</p>
+                    <div class="text-sm text-gray-700 dark:text-gray-300 message-content">${formatMessage(safeText)}</div>
                 </div>
             </div>
         `;
     }
 
     messagesContainer.appendChild(messageDiv);
+
+    // Highlight code blocks if Prism is available
+    if (typeof Prism !== 'undefined') {
+        Prism.highlightAllUnder(messageDiv);
+    }
+
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 }
 
