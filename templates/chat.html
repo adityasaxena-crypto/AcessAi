@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fiesta Chat - Unified AI Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        secondary:5CF6',
+         F6',
+
+                      dark: {
+                            50: '#1a1a1a',
+         d2d2d',
+4040',
+                         ',
+                            400: '#737373',
+                            500: '#a3a3a3',
+                            600: '#d4d4d4',
+         
+#f5f5f5',
+                       fff'
+                        }
+         ,
+ {
+                        'sanstem-ui']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleswap');
+
+        .text {
+
+            -webkit-ip: text;
+            -webkit-text-fill-color: transparent;
+            background-cltext;
+        }
+
+        .gradient-bg {
+            background: linea0%);
+        }
+
+        .chat-message {
+            animation: f
+        }
+
+p {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+         
+            Y(0);
+       }
+        }
+
+        .vertical-tab {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate;
+        }
+
+        .tab-content {
+ 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            max-height: 500px;
+        }
+
+        .streaming-indicator {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1}
+            50% { opacity: 0.5; }
+        }
+
+        .dark-scrollbar::-webkit-s
+            width: 8px;
+        }
+
+        .dark-scrollbar::-webkit {
+            background: #2d2d2d;
+        }
+
+        .dark-scrollbar::-webkit-scrollbar-{
+            background: #525252;
+            border-radius: 4px;
+        }
+
+        .dark-scrollbar::-webk
+            background: #7373;
+        }
+    </style>
+</head>
+<body clas>
+
+    <nav class="fixed top-0 w-fu00">
+        <div class="max-w-7xl mx-auto px-
+            <div class="flex justih-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold gradient-text">AI Fiesta</a>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex items-
+                    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-dark-200 text-gray-600 dark:text-dark-600 hoverrs">
+                        <svg id="theme-toggle-dark-icon">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="t0 20">
+                            <pathth>
+                        </svg>
+                    </button>
+                    <button id="ne">
+                        New Ch
+                    </button>
+                </div>
+</div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="pt-16 min-h-screen>
+        <!-- Vertical Tabs Sideba -->
+        <div class="w-16 bg-white dark:bg-dark-100 border-r border-gray-200 dark:border">
+            <div class="flex-1 py-4">
+                <button class="tab
+                    <span clas
+                </button>
+                <button cls">
+                    <sses</span>
+
+                <button class="tab-button w-full h-20 flex >
+                    <span class="vertical-tab">History</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content Panel -->
+        <div class="w-80 bg-white dark
+            <!-- Models Tab -->
+            <div id="models-tab" class="tab-content active p-6 dark-scrollbar overflow-y-auto 
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-dark-900</h2>
+                <p class="text-sm text
+                
+                <div class="space-y-4">
+                    <!-- Core els -->
+">
+                        <h3 class="text-sm font-semibold text-gray-700 dark:text-dark-700 uppercase tracking-wide">Core Models</h3>
+                        
+                        <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 cursor-pointer transition-colors">
+                            <input type="checkbox" checked class="m">
+                            <div classnter">
+                                <div -3">
+                                    <span class="text-sm">🤖</span>
+                                </div>
+                                <div>
+                                  AI</div>
+                                    <div class="text-xs text-gray-500 dark:text-dark-500">Medium Latest</div>
+                              
+
+                        </label>
+
+                        <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 cursor-pointer transition-colors">
+                            <input type="checkbox" checked class="m
+                            <div class
+                                <div >
+                                    <span class="text-sm">✍️</span>
+                                </div>
+                                <div>
+                                  
+                                    <div class="text-xs text-gray-500 dark:text-dark-500">4.5 Flash</div>
+                              >
+</div>
+                        </label>
+                    </div>
+
+                    <!-- Ollama Models -->
+                    <div class="space-2">
+                        <h3 class="te>
+                        
+                        <label class="flex items-center p-3 rounded-lg hover:bg
+                            <input typ
+                            <div c">
+                                <div class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 
+                              
+iv>
+                                <div>
+                                    <div class="font-medium
+                                    <div class="text-xs text-gray-500 dark:text-dark-500">671B</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center p-3 rounded-lg hover:bg-g
+                            <input typ">
+                            <div c
+                                <div class="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-9">
+                              💬</span>
+v>
+                                <div>
+                                    <div class="font-medium
+                                    <div class="text-xs text-gray-500 dark:text-dark-500">20B</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center p-3 rounded-lg hover:bg-gr
+                            <input typ
+                            <div c">
+                                <div class="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-9
+                              span>
+                          >
+                          <div>
+                  /div>
+              B</div>
+/div>
+                          
+                        </label>
+
+                        <label class="flex items-center p-3 rou
+                            <input type="checkbox" class="model
+                            <div class="ml-3 flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900 dark:to-purple-800 rounded-lg flex items
+                                    <span cl
+                             >
+                      >
+                  /div>
+
+                                </div>
+                            </div>
+                        </label>
+
+                        <label class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-dark-200 cursor-pointer transition-colors">
+                            <input type="checkbox" classud">
+                          r">
+                                <div class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-indigo-">
+                                    <span class="text-sm">💻</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium tex
+                                    <div class="text-xs text-gray-5080B</div>
+                                </div>
+                            </div>
+                        </el>
+
+                  ">
+
+                            <dier">
+                                <div class="w-8 h-8 bg-gradientr mr-3">
+                                    <span class
+                                </div>
+                                <div>
+                                    <>
+                                    <div class="ted</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responses Ta -->
+            <div id="responses-tab" 
+                <h2 class="text-lg fo
+                <div id="live-
+                    <p clan...</p>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-tab" class="tab-content p-6 dark-scrcreen">
+                <h2 class="tex/h2>
+                <div id="chat-history" class="space-y-4">
+                    <p class="text-gray-500 dp>
+                </div>
+            </div>
+        </div>
+
+        <!-- M->
+        <dk-50">
+>
+            <div class="bg-w p-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-semibold text-gray-900 dark:t
+                    <div class="flex items-center space-x-4">
+                        <span id="selected-count" class="text-sm tepan>
+              
+          eaming ON
+>
+            
+                </div>
+            </div>
+
+            <!-- Messages Contai
+            <div id="messages" class="flex-1 overflow-y-auto p-6 spaceollbar">
+                <!-- Welcome Message -->
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gradient-mb-4">
+                        <span class="text-3xl">💬</span>
+                    </div>
+          !</h2>
+>
+                </div>
+            </div>
+
+            <!-- Input A>
+            <div class="bg-white dark:bg-dark-100 bo">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex space-x-4">
+                        <div class="flex-1 
+                            <textarea
+                                id="mess
+          ne)"
+
+                          
+                            ></textarea>
+                            <but
+
+                       
+                            >
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-3 t>
+                        <div class="flex items-center space-x-4">
+                            <span>Press Enter to send</span>
+an>
+                     
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </d
+/div>
+
+    <script>
+        // Theme management
+        const themeToggle = document.getElementById('theme-toggle');
+');
+        const themeToggleLightIc;
+
+        // Check for saved theme preference or default ode
+        const currentTheme = localStora 'light';
+        
+        if (curreark') {
+            doc');
+
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        themeTo{
+icons
+            themeToggleDarkIcon.classList');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            // Toggle dark mode
+            if (document.documentElement.classList.contains('dark')) {
+dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                doc);
+'dark');
+            }
+        });
+
+        // Tab management
+        const tabBu
+        const t);
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active', 'border-p'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+               t
+ary');
+                documen);
+            });
+        });
+
+        // Model names for display
+        const MODEL_NAMES = {
+            'mistral': 'Mistral AI',
+            'glm': 'GLM (Z.AI)',
+            'ollama_deepseek-v3.1:671b-cloud': 'DeepSeek V3.1 (671B)',
+            '
+            'ollama_gpt-oss:120b-c,
+         ,
+,
+            'ollama_glm-4.6:cloud': 'GLM 4.6'
+        };
+
+splay
+        const MODEL_ICONS = {
+            'mistral': '🤖',
+            'glm': '✍️',
+            'ollama_deepseek-v3.1:671b-cloud': '🧠',
+            ',
+         : '🚀',
+⭐',
+            'ollama_qwen3-coder:480b-cloud': '💻',
+            'ollama_glm-4.6:cloud': '🔥'
+        };
+
+        // Chat functionality
+        let selectedModels = ['mistral', 'g
+        let messageHistory = [];
+        let streamingEn;
+
+ents
+        const messagesContainerages');
+        const messageInput = document.getEle
+        const sendButton = document.;
+        const selectedCount = document.getElement');
+
+        const liveResponses =;
+        const chatHistory = document.getElementById('chat-history');
+
+        // Initialize
+        document.addEventL) {
+ount();
+            setup;
+        });
+
+        function setupEventLisrs() {
+            // Send message
+            sendButtondMessage);
+
+            // Enter key to send
+            messageInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.sh
+                    e.preventDefault();
+                    sendMessag
+                }
+            });
+
+            // Auto-resize textarea
+            messageInput.addEvction() {
+;
+                this.style.height = ';
+            });
+
+            // Model selection
+            document.querySelectorAll('.model-checkbox').forEach(checkbox => {
+                check() {
+                   el;
+
+                        selec
+                    } else if )) {
+                        selectedModels = selectedModels.filter(m => m !== modelKey);
+                    }
+         t();
+
+            });
+
+            // Stream toggle
+ {
+                streamingEnabled = !ed;
+                this.textContent = streamingEnabled ? '';
+                this.classList.toggle('b
+                this.classList.toggle('bg-gray-500', !streamingEnad);
+            });
+
+            // New chat
+            document.getEl);
+        }
+
+        function updateSelectedCount() {
+            selectedCount.textContent = `${selectedModels.length} model${selectedModeld`;
+ }
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            if (selectedMo
+                alert('Please select at least one AI model.');
+                return;
+            }
+
+            // Add user message
+            displayMessage('user', message);
+            messageInput.value = '';
+            messageInput.styleo';
+
+            // Addo history
+            m);
+ory();
+
+            if (streamingEnabled) {
+         ge);
+ else {
+                await sendBatchM);
+            }
+        }
+
+        async function sendStrea{
+            // Clear live responses
+         p>';
+
+            // Switch to respo tab
+            document.querySelector('[data-t();
+
+            const modelsToUse = selectedModels.reduce((acc, model) => {
+                acc[model] = true;
+                return acc;
+            }, {});
+
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: y({
+                      message,
+              ,
+                        stream: 
+                    })
+               });
+
+                const reader = rr();
+                const decoder = new T
+                let buffer = '';
+
+             e) {
+       );
+       k;
+ml>/hty>
+<bod
+</pt>
+    </scri       }story();
+ tHiteCha  upda   
+       n...</p>'; stream ire as theyar heappel sponses wilm">Rek-500 text-s:text-dar00 darkray-5ext-g"tass=L = '<p cles.innerHTM liveRespons       ';
+    t.value = 'geInpu  messa    
+      ];story = [essageHi      m   
+     `;  
+        iv>      </d   /p>
+       time.<am in real-streponses will ting. Resatnd start ch a the sidebarls fromt AI mode">Selecrk-600 mb-6-da:text darkray-600ext-g<p class="t                   >
+ ta!</h2AI Fieselcome to b-2">W900 mark-:text-dark day-900grd text-2xl font-bolss="text-h2 cla         <
+           iv>/d    <             pan>
+   t-3xl">💬</sass="tex<span cl                      b-4">
+  r mx-auto mcentefy-tienter juslex items-cll f-fuundedple-900 roto-pur900 dark:ndigo-om-irk:fr-100 daurpleo-100 to-pom-indignt-to-br fr16 bg-gradieh-16 v class="w-        <di           12">
+ center py-s="text- clas<div                erHTML = `
+ontainer.innssagesC     me      ) {
+ t(haion clearCunct       f }
+
+   
+         });        toryItem);
+ild(his.appendChtory  chatHis       
+                     `;
+                  ''}</p>
+ ...' :100 ? '.length > {msg.text}$g(0, 100)xt.substrin{msg.te">$-clamp-3 linerk-700k:text-daay-700 darsm text-grxt-ss="te <p cla                 </div>
+                >
+      r}</spaneSt400">${timdark- dark:text-ay-400-grtext-xs textclass="     <span                n>
+    </spamodelName}' ? 'You' : userer === '{msg.us00'}">$-6:text-darky-600 darktext-gramary' : 'xt-prier' ? 'teser === 'ussg.u ${miboldont-sem fxss="text-asclpan    <s                  ">
+   1between mb-er justify-cents-em"flex itdiv class=          <          = `
+L .innerHTM historyItem       
+               
+         ';ing() : 'eStrimleTtoLocag.timestamp.p ? msestamtimStr = msg.timeconst             ;
+    l] : ''modeL_NAMES[msg.ODEmodel ? Me = msg.t modelNam      cons              
+         b-2';
+   nded-lg mk-200 rou:bg-dary-50 dark-grae = 'p-3 bgssNamoryItem.cla      hist      v');
+    ent('di.createElementItem = documry const histo         
+       => {rEach(msgfostory.ssageHi       me
+
+           }     rn;
+      retu  
+         /p>';...< appear heretory willrsation hisur convetext-sm">York-500 :text-daay-500 darktext-grclass="TML = '<p ory.innerHst    chatHi        {
+    h === 0) ory.lengtstf (messageHi         i
+          
+     L = '';nerHTMtHistory.in   cha
+         story() {teChatHiction updaun   f
+      }
+    eight;
+   er.scrollHntainmessagesColTop = ainer.scrolmessagesCont     v);
+       ld(messageDir.appendChiesContainessagme     
+         }
+             `;
+         
+    iv>    </d          >
+        </div              
+        t}</p>${texre-wrap">ce-pspa0 whiterk-70da0 dark:text--gray-70xttetext-sm class="       <p                     200">
+ rder-dark-00 dark:bogray-2er border-4 py-3 bord px--smunded-blunded-lg ro0 robg-dark-10k:te dar="bg-whissiv cla     <d            
+           </div>           
+         span>Name}</">${model0 text-sm-dark-9000 dark:textay-9xt-gribold te"font-semspan class=        <                   >
+ b-1"ms-center miteass="flex     <div cl             >
+       g"ax-w-ld xl:mx-w-mxs lg:maw-x-="flex-1 maclass <div                 v>
+      </di         v>
+           </di                   
+  span>elIcon}</sm">${mod="text-pan class         <s            >
+       "tify-centerjusr cente flex items-llunded-furoto-gray-600 y-700 dark:raom-g:fry-200 dark-100 to-gragrayrom--br fient-to-grad"w-8 h-8 bg=<div class                    ">
+    rink-0lex-sh class="fiv          <d
+          = `erHTML ssageDiv.inn     me            : '🤖';
+
+[models[0]]ODEL_ICONS 1 ? Mgth ===.lenon = modelsonst modelIc  c          ';
+    AI Assistants[0]] : '_NAMES[model? MODEL= 1 length === models.elName onst mod      c            } else {
+                  `;
+      
+       </div>              div>
+       </            
+      text}</p>xt-sm">${"te  <p class=                        
+  y-2"> px-4 p-sm-brundedded-lg roount-white rmary texss="bg-pri   <div cla                    ">
+ l:max-w-lgx-w-md xg:mas l-x="max-wv class    <di      
+          TML = `rHnesageDiv.in         mes
+       nd';' justify-eassName += ssageDiv.cl   me           {
+   'user') sender ===        if (   
+ -4';
+space-xlex t-message f'chae = Div.classNam    message      
+  t('div');reateElemenocument.c dDiv =ageessst m     con{
+        = []) t, modelsder, texe(senplayMessagtion dis     func
+   
+        }
+);ponseDivld(resChiends.appponseiveRes l            
+            `;
+          </p>
+ nse}ta.respo-wrap">${daace-prewhitesp-700 text-darky-700 dark:graext- txt-smclass="tep   <           v>
+     </di              
+ </span>                  sing...'}
+ e' : 'Proces' ? 'Completletes === 'comptatu${data.s                      ">
+  unded-fullrot-green-200 rk:texn-800 dat-gree900 texn-greebg-rk:een-100 das bg-gr1 text-xpx-2 py-ass="ml-2  <span cl               
+    span>ame}</0">${modelNtext-dark-90ark:gray-900 dd text-t-semibol="fonan class <sp                  }</span>
+ {modelIcon-lg mr-2">$lass="textpan c        <s            
+-2">er mbtems-cent"flex iass=     <div cl      L = `
+     v.innerHTMseDi    respon
+        r-primary';ordel-4 bg border-unded-l rodark-200bg--50 dark:gray = 'p-4 bg-v.classNameseDi  respon      div');
+    teElement('rea document.cponseDiv = resonst    c         }
+
+          '';
+  ML =HTes.innerliveRespons           {
+     ector('p')) querySeles.ponsiveRes if (l   es
+        nslive respo  // Update         
+          
+    | '🤖';ata.model] |S[dEL_ICONcon = MODconst modelI           odel;
+ l] || data.mmode[data._NAMESe = MODELelNammod   const {
+         e(data) ponsResmingplayStrean disfunctio       }
+
+  }
+                 
+  error']); again.', ['lease tryr request. Poug yocessinpran error  was here', 'Sorry, tge('aisaMesplay     dis           r);
+r:', erro erroerror('Batche.      consol       r) {
+    catch (erro    }        ();
+hatHistoryteC      upda        });
+
+             
+        }              
+       });                   ate() 
+ w Dmp: neta times                          lKey,
+ el: mode        mod               ey], 
+     s[modelKultt: res       tex                   ai', 
+       user: '                ({ 
+       ush.pgeHistorysames                       elKey]);
+ , [modelKey]od[msults', ree('aiayMessagpl     dis                   delKey]) {
+(results[moif                   
+  lKey => {ach(mode.forEresults)ys(.ke      Object         
+ sesay respon// Displ            
+    n();
+sosponse.jait relts = awnst resu     co    ;
+
+        })       
+           })                false
+  tream:        s                oUse,
+s: modelsTdel      mo                 age,
+ : messmessage                 y({
+       ingif JSON.str       body:          },
+                       
+n/json', 'applicationt-Type':'Conte                       {
+  ers:        head   
+         OST',od: 'P       meth          {
+   uery', tch('/q= await feresponse    const                 try {
+ 
+          }, {});
+    acc;
+          return        true;
+     = acc[model]             => {
+     c, model)reduce((actedModels.e = selec modelsToUsconst          ) {
+  e(messagehMessagendBatcn sctio funnc
+        asy   }
+}
+              ']);
+   rror', ['eain.e try agleasest. Pyour requcessing error proere was an th, ai', 'Sorryage('splayMess     di        r);
+   r:', erroroStreaming err('onsole.erro          c
+      error) {catch (         } );
+   ry(HistoateChat     upd          
+ 
+     }     }
+                     
+            }                    }
+               
+          a:', e);atg d streaminr parsing'Errosole.error(         con                        {
+ catch (e)     }                   );
+          }                         Date() 
+ estamp: new         tim                       el,
+     moddel: data.       mo                          , 
+   responset: data.   tex                               ai', 
+  r: '    use                              ush({ 
+  y.peHistor     messag                           istory
+dd to h   // A                               
+                         ;
+     ata.model])e, [donssp data.reage('ai',ayMess  displ                      
+        ta);(dasponseingReyStream  displa                         6));
+     ce(ne.slirse(lipaN.= JSOa    const dat                     
+           try {               
+          a: ')) {ith('datne.startsWif (li                   {
+      lines)of onst line for (c                   r
+
+  buffeine inte lncomple); // Keep ipop(s.iner = l  buffe              
+    ('\n');r.splitines = buffenst l co             
+      ue });{ stream: tr, ecode(valueecoder.d der +=   buff            
+     

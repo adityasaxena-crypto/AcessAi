@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>aiAssistant Chat - Modern Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        secondary: '#8B5CF6',
+                        accent: '#3B82F6'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #3B82F6 100%);
+        }
+
+        .vertical-tab {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        .tab-content {
+            display: none;
+            transition: all 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .chat-message {
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .streaming-indicator {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 dark:bg-gray-900 font-sans transition-colors duration-300">
+    <!-- Navigation -->
+    <nav
+        class="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <a href="/" class="text-2xl font-bold gradient-text">aiAssistant</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button id="theme-toggle"
+                        class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        <svg id="theme-toggle-dark-icon" class="hidden w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                        <svg id="theme-toggle-light-icon" class="hidden w-5 h-5" fill="currentColor"
+                            viewBox="0 0 20 20">
+                            <path
+                                d="M10 2L13.09 8.26L20 9L14 14.74L15.18 21.02L10 17.77L4.82 21.02L6 14.74L0 9L6.91 8.26L10 2Z">
+                            </path>
+                        </svg>
+                    </button>
+                    <button id="new-chat-btn"
+                        class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        New Chat
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="pt-16 min-h-screen flex">
+        <!-- Vertical Tabs Sidebar -->
+        <div class="w-20 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+            <div class="flex-1 py-4">
+                <button
+                    class="tab-button w-full h-24 flex items-center justify-center text-sm font-medium text-primary bg-primary/10 border-r-4 border-primary transition-all active"
+                    data-tab="models">
+                    <span class="vertical-tab font-semibold">Models</span>
+                </button>
+                <button
+                    class="tab-button w-full h-24 flex items-center justify-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 border-r-4 border-transparent hover:border-primary transition-all"
+                    data-tab="responses">
+                    <span class="vertical-tab">Responses</span>
+                </button>
+                <button
+                    class="tab-button w-full h-24 flex items-center justify-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 border-r-4 border-transparent hover:border-primary transition-all"
+                    data-tab="history">
+                    <span class="vertical-tab">History</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab Content Panel -->
+        <div class="w-96 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <!-- Models Tab -->
+            <div id="models-tab" class="tab-content active p-6 overflow-y-auto h-screen">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">AI Models</h2>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-6">Select models to chat with</p>
+
+                <div class="space-y-4">
+                    <!-- Core Models -->
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">Core
+                            Models</h3>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox" checked
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="mistral">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-900 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">🤖</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">Mistral AI</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Medium Latest</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox" checked
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="glm">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">✍️</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">GLM (Z.AI)</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">4.5 Flash</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Ollama Models -->
+                    <div class="space-y-2">
+                        <h3 class="text-sm font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide">
+                            Ollama Cloud</h3>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox"
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_deepseek-v3.1:671b-cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900 dark:to-blue-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">🧠</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">DeepSeek V3.1</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">671B</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox"
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_gpt-oss:20b-cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">💬</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">GPT-OSS</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">20B</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox"
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_gpt-oss:120b-cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">🚀</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">GPT-OSS</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">120B</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox"
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_kimi-k2:1t-cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900 dark:to-purple-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">⭐</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">Kimi K2</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">1T</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox"
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_qwen3-coder:480b-cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-indigo-100 to-indigo-200 dark:from-indigo-900 dark:to-indigo-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">💻</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">Qwen3 Coder</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">480B</div>
+                                </div>
+                            </div>
+                        </label>
+
+                        <label
+                            class="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors">
+                            <input type="checkbox"
+                                class="model-checkbox rounded border-gray-300 text-primary focus:ring-primary"
+                                data-model="ollama_glm-4.6:cloud">
+                            <div class="ml-3 flex items-center">
+                                <div
+                                    class="w-8 h-8 bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900 dark:to-orange-800 rounded-lg flex items-center justify-center mr-3">
+                                    <span class="text-sm">🔥</span>
+                                </div>
+                                <div>
+                                    <div class="font-medium text-gray-900 dark:text-white">GLM 4.6</div>
+                                    <div class="text-xs text-gray-500 dark:text-gray-400">Cloud</div>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responses Tab -->
+            <div id="responses-tab" class="tab-content p-6 overflow-y-auto h-screen">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Live Responses</h2>
+                <div id="live-responses" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Responses will appear here as they stream in...
+                    </p>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-tab" class="tab-content p-6 overflow-y-auto h-screen">
+                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Chat History</h2>
+                <div id="chat-history" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Your conversation history will appear here...
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="flex-1 flex flex-col bg-gray-50 dark:bg-gray-900">
+            <!-- Chat Header -->
+            <div class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-semibold text-gray-900 dark:text-white">AI Chat</h1>
+                    <div class="flex items-center space-x-4">
+                        <span id="selected-count" class="text-sm text-primary font-medium">2 models selected</span>
+                        <button id="stream-toggle" class="px-3 py-1 text-xs bg-primary text-white rounded-full">
+                            Streaming ON
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Container -->
+            <div id="messages" class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Welcome Message -->
+                <div class="text-center py-12">
+                    <div
+                        class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <span class="text-3xl">💬</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Welcome to aiAssistant!</h2>
+                    <p class="text-gray-600 dark:text-gray-400 mb-6">Select AI models from the sidebar and start
+                        chatting. Responses will stream in real-time.</p>
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 p-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex space-x-4">
+                        <div class="flex-1 relative">
+                            <textarea id="message-input"
+                                placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
+                                class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                                rows="1"></textarea>
+                            <button id="send-button"
+                                class="absolute right-2 top-2 bottom-2 gradient-bg text-white px-4 py-1 rounded-lg font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                Send
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mt-3 text-sm text-gray-500 dark:text-gray-400">
+                        <div class="flex items-center space-x-4">
+                            <span>Press Enter to send</span>
+                            <span>•</span>
+                            <span>Shift+Enter for new line</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/chat.js"></script>
+</body>
+
+</html>

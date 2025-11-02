@@ -1,0 +1,213 @@
+from flask import Flask, render_template, request, jsonify, Response, stream_template
+from flask_cors import CORS
+import os
+import requests
+from mistralai.client import MistralClient
+import json
+import threading
+import time
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for frontend integration
+
+@app.route('/')
+def index():
+    return render_template('index_new.html')
+
+# API Keys from environment variables
+MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
+GLM_API_KEY = os.getenv('GLM_API_KEY')
+OLLAMA_API_KEY = os.getenv('OLLAMA_API_KEY')
+
+# Check if API keys are loaded
+if not MISTRAL_API_KEY:
+    print("Warning: MISTRAL_API_KEY not found in environment variables")
+if not GLM_API_KEY:
+    print("Warning: GLM_API_KEY not found in environment variables")
+if not OLLAMA_API_KEY:
+    print("Warning: OLLAMA_API_KEY not found in environment variables")
+
+def query_mistral(message):
+    """Query Mistral AI API"""
+    if not MISTRAL_API_KEY:
+        return "Error: Mistral API key not configured"
+    
+    try:
+        client = MistralClient(api_key=MISTRAL_API_KEY)
+        chat_response = client.chat(
+            model="mistral-medium-latest",
+            messages=[{"role": "user", "content": message}]
+        )
+        return chat_response.choices[0].message.content
+    except Exception as e:
+        return f"Error querying Mistral: {str(e)}"
+
+def query_glm(message):
+    """Query GLM (Z.AI) API"""
+    if not GLM_API_KEY:
+        return "Error: GLM API key not configured"
+    
+    try:
+        url = 'https://api.z.ai/api/paas/v4/chat/completions'
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': GLM_API_KEY
+        }
+        data = {
+            "model": "GLM-4.5-Flash",
+            "messages": [{"role": "user", "content": message}],
+            "thinking": {"type": "enabled"},
+            "max_tokens": 4096,
+            "temperature": 1.0
+        }
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        if response.status_code == 200:
+            result = response.json()
+            return result.get('choices', [{}])[0].get('message', {}).get('content', 'No response from GLM')
+        else:
+            return f"Error querying GLM: {response.text}"
+    except Exception as e:
+        return f"Error querying GLM: {str(e)}"
+
+OLLAMA_MODELS = {
+    'deepseek-v3.1:671b-cloud': 'DeepSeek V3.1 (671B)',
+    'gpt-oss:20b-cloud': 'GPT-OSS (20B)',
+    'gpt-oss:120b-cloud': 'GPT-OSS (120B)',
+    'kimi-k2:1t-cloud': 'Kimi K2 (1T)',
+    'qwen3-coder:480b-cloud': 'Qwen3 Coder (480B)',
+    'glm-4.6:cloud': 'GLM 4.6'
+}
+
+def query_ollama(message, model_name):
+    """Query specific Ollama Cloud model"""
+    if not OLLAMA_API_KEY:
+        return "Error: Ollama API key not configured"
+    
+    try:
+        # Try using requests for HTTP-based API first
+        url = 'https://ollama.com/api/chat'
+        headers = {
+            'Authorization': f'Bearer {OLLAMA_API_KEY}',
+            'Content-Type': 'application/json'
+        }
+        data = {
+            "model": model_name,
+            "messages": [{"role": "user", "content": message}],
+            "stream": False
+        }
+
+        response = requests.post(url, headers=headers, json=data)
+
+        if response.status_code == 200:
+            result = response.json()
+            return result.get('message', {}).get('content', 'No response from model')
+        else:
+            # Fallback: return a message indicating the API might not be available
+            return f"Error querying {OLLAMA_MODELS.get(model_name, model_name)}: API may require additional configuration."
+
+    except Exception as e:
+        return f"Error querying {OLLAMA_MODELS.get(model_name, model_name)}: {str(e)}"
+
+@app.route('/chat')
+def chat():
+    return render_template('chat_new.html')
+
+@app.route('/query', methods=['POST'])
+def query_apis():
+    data = request.get_json()
+    message = data.get('message', '')
+    models = data.get('models', {})
+    stream = data.get('stream', False)
+
+    if stream:
+        return Response(stream_responses(message, models), mimetype='text/plain')
+    
+    results = {}
+
+    # Handle different model formats (from chat interface vs direct API calls)
+    if isinstance(models, dict):
+        # New format from chat interface
+        if models.get('mistral'):
+            results['mistral'] = query_mistral(message)
+
+        if models.get('glm'):
+            results['glm'] = query_glm(message)
+
+        # Handle Ollama models - each can be individually selected
+        for model_key in OLLAMA_MODELS.keys():
+            if models.get(f'ollama_{model_key}'):
+                results[f'ollama_{model_key}'] = query_ollama(message, model_key)
+            elif models.get(model_key):  # Direct model name format
+                results[model_key] = query_ollama(message, model_key)
+    else:
+        # Old format (array) for backward compatibility
+        if 'mistral' in models:
+            results['mistral'] = query_mistral(message)
+
+        if 'glm' in models:
+            results['glm'] = query_glm(message)
+
+        if 'ollama' in models:
+            results['ollama'] = query_ollama(message)
+
+    return jsonify(results)
+
+def stream_responses(message, models):
+    """Stream responses from multiple models as they complete"""
+    import concurrent.futures
+    import queue
+    
+    result_queue = queue.Queue()
+    
+    def query_model(model_key):
+        try:
+            if model_key == 'mistral':
+                result = query_mistral(message)
+            elif model_key == 'glm':
+                result = query_glm(message)
+            elif model_key.startswith('ollama_'):
+                actual_model = model_key.replace('ollama_', '')
+                result = query_ollama(message, actual_model)
+            else:
+                result = f"Unknown model: {model_key}"
+            
+            result_queue.put({
+                'model': model_key,
+                'response': result,
+                'status': 'complete'
+            })
+        except Exception as e:
+            result_queue.put({
+                'model': model_key,
+                'response': f"Error: {str(e)}",
+                'status': 'error'
+            })
+    
+    # Start all model queries in parallel
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        futures = []
+        
+        if isinstance(models, dict):
+            for model_key, enabled in models.items():
+                if enabled:
+                    futures.append(executor.submit(query_model, model_key))
+        
+        # Yield results as they complete
+        completed = 0
+        total = len(futures)
+        
+        while completed < total:
+            try:
+                result = result_queue.get(timeout=30)  # Increased timeout
+                yield f"data: {json.dumps(result)}\n\n"
+                completed += 1
+            except queue.Empty:
+                # Send a heartbeat to keep connection alive
+                yield f"data: {json.dumps({'status': 'processing'})}\n\n"
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)

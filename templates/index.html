@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Fiesta - World's Most Powerful AIs. One Chat. Subscription.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366F1',
+                        secondary: '#8B5CF6',
+                        accent: '#3B82F6',
+                        success: '#10B981',
+                        dark: '#0F172A',
+                        'dark-gray': '#1E293B',
+                        'light-gray': '#F1F5F9'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'ui-sans-serif', 'system-ui']
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-out forwards',
+                        'fade-in-up': 'fadeInUp 0.6s ease-out forwards',
+                        'fade-in-left': 'fadeInLeft 0.6s ease-out forwards',
+                        'fade-in-right': 'fadeInRight 0.6s ease-out forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'gradient': 'gradient 3s ease infinite'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #3B82F6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #3B82F6 100%);
+        }
+
+        .animate-fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .animate-fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .animate-fade-in-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: fadeInLeft 0.6s ease-out forwards;
+        }
+
+        .animate-fade-in-right {
+            opacity: 0;
+            transform: translateX(30px);
+            animation: fadeInRight 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .pricing-toggle {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 30px;
+        }
+
+        .pricing-toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .pricing-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .pricing-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .pricing-slider {
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+        }
+
+        input:checked + .pricing-slider:before {
+            transform: translateX(30px);
+        }
+    </style>
+</head>
+<body class="font-sans bg-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-morphism border-b border-white/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="text-2xl font-bold gradient-text">AI Fiesta</div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-700 hover:text-primary transition-colors">Features</a>
+                    <a href="#pricing" class="text-gray-700 hover:text-primary transition-colors">Pricing</a>
+                    <a href="#models" class="text-gray-700 hover:text-primary transition-colors">AI Models</a>
+                    <a href="#faqs" class="text-gray-700 hover:text-primary transition-colors">FAQs</a>
+                    <button onclick="window.location.href='/chat'" class="gradient-bg text-white px-6 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-gray-700 hover:text-primary">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="hidden md:hidden glass-morphism border-t border-white/20">
+            <div class="px-4 py-4 space-y-4">
+                <a href="#features" class="block text-gray-700 hover:text-primary transition-colors">Features</a>
+                <a href="#pricing" class="block text-gray-700 hover:text-primary transition-colors">Pricing</a>
+                <a href="#models" class="block text-gray-700 hover:text-primary transition-colors">AI Models</a>
+                <a href="#faqs" class="block text-gray-700 hover:text-primary transition-colors">FAQs</a>
+                <button onclick="window.location.href='/chat'" class="w-full gradient-bg text-white px-6 py-2 rounded-full font-medium">
+                    Get Started
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-24 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-50 relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 opacity-30">
+            <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-float"></div>
+            <div class="absolute top-40 right-10 w-72 h-72 bg-indigo-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: 2s;"></div>
+            <div class="absolute bottom-20 left-1/2 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl animate-float" style="animation-delay: 4s;"></div>
+        </div>
+
+        <div class="max-w-7xl mx-auto relative">
+            <div class="text-center">
+                <!-- Badge -->
+                <div class="inline-flex items-center px-4 py-2 rounded-full bg-white/80 backdrop-blur-sm border border-gray-200 mb-8 animate-fade-in">
+                    <span class="text-sm font-medium text-gray-700">✨ Built by AI Experts</span>
+                </div>
+
+                <!-- Main Headline -->
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 animate-fade-in-up" style="animation-delay: 0.2s;">
+                    <span class="gradient-text">World's Most Powerful AIs.</span><br>
+                    <span class="text-gray-900">One Chat. Subscription.</span>
+                </h1>
+
+                <!-- Subheadline -->
+                <p class="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in-up" style="animation-delay: 0.4s;">
+                    Access ChatGPT 5, Claude Sonnet 4, Gemini 2.5 Pro, and 6+ premium AI models in one unified platform.
+                    Save 80% compared to individual subscriptions.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in-up" style="animation-delay: 0.6s;">
+                    <button onclick="window.location.href='/chat'" class="gradient-bg text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-gradient">
+                        Start Free Trial
+                    </button>
+                    <button class="bg-white text-gray-700 px-8 py-4 rounded-full font-semibold text-lg border-2 border-gray-200 hover:border-primary hover:text-primary transition-all duration-300">
+                        Watch Demo
+                    </button>
+                </div>
+
+                <!-- Social Proof -->
+                <div class="mt-12 animate-fade-in-up" style="animation-delay: 0.8s;">
+                    <p class="text-gray-500 mb-4">Trusted by 10,000+ users worldwide</p>
+                    <div class="flex justify-center items-center space-x-8 opacity-60">
+                        <div class="text-2xl">🏢 Enterprise</div>
+                        <div class="text-2xl">🎓 Students</div>
+                        <div class="text-2xl">🚀 Startups</div>
+                        <div class="text-2xl">💼 Professionals</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    Everything you need in
+                    <span class="gradient-text">one platform</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Powerful features that make AI Fiesta the ultimate choice for professionals, students, and teams
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="group bg-white p-8 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">⚡</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Side-by-Side Comparison</h3>
+                    <p class="text-gray-600 mb-4">Compare responses from multiple AI models simultaneously to find the best answer for your needs.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Real-time comparison</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Export results</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Save favorites</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="group bg-white p-8 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">🚀</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Prompt Enhancement</h3>
+                    <p class="text-gray-600 mb-4">AI-powered prompt optimization to get better, more accurate responses from any model.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Auto-optimization</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Context awareness</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Multi-language</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="group bg-white p-8 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">🎨</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Custom Projects</h3>
+                    <p class="text-gray-600 mb-4">Create and manage custom AI projects with specialized workflows and team collaboration.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Project workspaces</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Team collaboration</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Version history</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="group bg-white p-8 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">🖼️</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Image Generation</h3>
+                    <p class="text-gray-600 mb-4">Generate stunning images with DALL-E 3, Midjourney, and Stable Diffusion in one place.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Multiple engines</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> High resolution</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Style variations</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="group bg-white p-8 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-purple-100 to-blue-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">🎵</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Audio Transcription</h3>
+                    <p class="text-gray-600 mb-4">Convert audio and video files to text with Whisper and other advanced transcription models.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Multiple formats</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Multi-language</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Speaker detection</li>
+                    </ul>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="group bg-white p-8 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-2xl">🔄</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Multi-Model Access</h3>
+                    <p class="text-gray-600 mb-4">Access 8+ premium AI models with a single subscription - no need for multiple accounts.</p>
+                    <ul class="text-sm text-gray-500 space-y-2">
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> One subscription</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Unified interface</li>
+                        <li class="flex items-center"><span class="text-green-500 mr-2">✓</span> Cost savings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Models Showcase -->
+    <section id="models" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-indigo-50">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    <span class="gradient-text">Premium AI Models</span>
+                    <br>at your fingertips
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Access the world's most advanced AI models, each specialized for different tasks and use cases
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- ChatGPT 5 -->
+                <div class="group bg-white p-6 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-green-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">🤖</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">ChatGPT 5</h3>
+                    <p class="text-primary font-medium text-sm mb-3">All Rounder Explainer</p>
+                    <p class="text-gray-600 text-sm">The most versatile AI model, perfect for general tasks, explanations, and creative writing with unmatched natural language understanding.</p>
+                </div>
+
+                <!-- Claude Sonnet 4 -->
+                <div class="group bg-white p-6 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">✍️</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Claude Sonnet 4</h3>
+                    <p class="text-primary font-medium text-sm mb-3">Co-Writing Master</p>
+                    <p class="text-gray-600 text-sm">Specialized in collaborative writing, document analysis, and long-form content creation with exceptional reasoning capabilities.</p>
+                </div>
+
+                <!-- Gemini 2.5 Pro -->
+                <div class="group bg-white p-6 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">🧠</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Gemini 2.5 Pro</h3>
+                    <p class="text-primary font-medium text-sm mb-3">Long Context Master</p>
+                    <p class="text-gray-600 text-sm">Handles extremely long contexts with precision, ideal for research, analysis, and complex problem-solving tasks.</p>
+                </div>
+
+                <!-- Perplexity Sonar Pro -->
+                <div class="group bg-white p-6 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">🔍</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Perplexity Sonar Pro</h3>
+                    <p class="text-primary font-medium text-sm mb-3">Live Web Researcher</p>
+                    <p class="text-gray-600 text-sm">Real-time web research with citations, fact-checking, and up-to-date information from across the internet.</p>
+                </div>
+
+                <!-- DeepSeek -->
+                <div class="group bg-white p-6 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">🧮</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">DeepSeek</h3>
+                    <p class="text-primary font-medium text-sm mb-3">Reasoning Specialist</p>
+                    <p class="text-gray-600 text-sm">Advanced reasoning and mathematical capabilities, perfect for complex calculations, logic problems, and analytical tasks.</p>
+                </div>
+
+                <!-- Grok 4 -->
+                <div class="group bg-white p-6 rounded-2xl border border-gray-100 hover:border-primary/30 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-gradient-to-br from-pink-100 to-pink-200 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <span class="text-3xl">✨</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Grok 4</h3>
+                    <p class="text-primary font-medium text-sm mb-3">Creative Powerhouse</p>
+                    <p class="text-gray-600 text-sm">Unleash creativity with advanced storytelling, art generation, and innovative problem-solving capabilities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    Save <span class="gradient-text">80%</span> on AI subscriptions
+                </h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Get access to all premium AI models for the price of one individual subscription
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                <!-- Individual Subscriptions -->
+                <div class="animate-fade-in-left">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">Individual Subscriptions</h3>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold text-gray-900">ChatGPT Plus</h4>
+                                <p class="text-sm text-gray-600">GPT-4 access</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-500 line-through">$20</span>
+                                <p class="text-sm text-gray-500">/month</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Claude Pro</h4>
+                                <p class="text-sm text-gray-600">Claude 3 access</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-500 line-through">$20</span>
+                                <p class="text-sm text-gray-500">/month</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Gemini Advanced</h4>
+                                <p class="text-sm text-gray-600">Ultra model access</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-500 line-through">$20</span>
+                                <p class="text-sm text-gray-500">/month</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-gray-50 rounded-xl">
+                            <div>
+                                <h4 class="font-semibold text-gray-900">Perplexity Pro</h4>
+                                <p class="text-sm text-gray-600">Research access</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-gray-500 line-through">$20</span>
+                                <p class="text-sm text-gray-500">/month</p>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center p-4 bg-red-50 rounded-xl border-2 border-red-200">
+                            <div>
+                                <h4 class="font-bold text-red-900">Total Cost</h4>
+                                <p class="text-sm text-red-600">All subscriptions</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-2xl font-bold text-red-600">$80</span>
+                                <p class="text-sm text-red-600">/month</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Fiesta Pricing -->
+                <div class="animate-fade-in-right">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">AI Fiesta</h3>
+
+                    <!-- Pricing Toggle -->
+                    <div class="flex items-center justify-center mb-6">
+                        <span class="text-gray-600 mr-4">Monthly</span>
+                        <label class="pricing-toggle">
+                            <input type="checkbox" id="pricing-toggle">
+                            <span class="pricing-slider"></span>
+                        </label>
+                        <span class="text-gray-600 ml-4">Yearly</span>
+                    </div>
+
+                    <!-- Pricing Card -->
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 rounded-2xl border-2 border-primary/20 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-purple-500/20 rounded-full transform translate-x-16 -translate-y-16"></div>
+
+                        <div class="relative">
+                            <div class="text-center mb-6">
+                                <div class="text-sm font-medium text-primary mb-2">MOST POPULAR</div>
+                                <div class="text-4xl font-bold gradient-text mb-2" id="monthly-price">$15</div>
+                                <div class="text-gray-600" id="price-period">/month</div>
+                                <div class="text-sm text-gray-500 mt-1" id="yearly-savings">Save $780/year with yearly plan</div>
+                            </div>
+
+                            <div class="space-y-4 mb-8">
+                                <div class="flex items-center">
+                                    <span class="text-green-500 mr-3">✓</span>
+                                    <span class="text-gray-700">Access to all 8+ AI models</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-500 mr-3">✓</span>
+                                    <span class="text-gray-700">Side-by-side comparisons</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-500 mr-3">✓</span>
+                                    <span class="text-gray-700">Prompt enhancement</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-500 mr-3">✓</span>
+                                    <span class="text-gray-700">Custom projects</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-500 mr-3">✓</span>
+                                    <span class="text-gray-700">Priority support</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <span class="text-green-500 mr-3">✓</span>
+                                    <span class="text-gray-700">No usage limits</span>
+                                </div>
+                            </div>
+
+                            <button onclick="window.location.href='/chat'" class="w-full gradient-bg text-white py-4 rounded-xl font-semibold text-lg hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                                Start Free Trial
+                            </button>
+
+                            <p class="text-center text-sm text-gray-500 mt-4">14-day free trial • No credit card required</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faqs" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-indigo-50">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                    Frequently Asked
+                    <span class="gradient-text">Questions</span>
+                </h2>
+                <p class="text-xl text-gray-600">
+                    Everything you need to know about AI Fiesta
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" data-faq="1">
+                        <span class="font-semibold text-gray-900">How does AI Fiesta compare to individual AI subscriptions?</span>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content px-6 pb-4 hidden">
+                        <p class="text-gray-600">AI Fiesta gives you access to 8+ premium AI models for $15/month, compared to paying $20+ for each individual subscription. That's a savings of over 80% while getting access to more models and features.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" data-faq="2">
+                        <span class="font-semibold text-gray-900">Which AI models are included?</span>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content px-6 pb-4 hidden">
+                        <p class="text-gray-600">We include ChatGPT 5, Claude Sonnet 4, Gemini 2.5 Pro, Perplexity Sonar Pro, DeepSeek, Grok 4, and more. We continuously add new models as they become available.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" data-faq="3">
+                        <span class="font-semibold text-gray-900">Can I cancel anytime?</span>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content px-6 pb-4 hidden">
+                        <p class="text-gray-600">Yes! You can cancel your subscription at any time. Your access will continue until the end of your billing period, and you'll keep access to all your saved projects and data.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" data-faq="4">
+                        <span class="font-semibold text-gray-900">Is there a free trial?</span>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content px-6 pb-4 hidden">
+                        <p class="text-gray-600">Absolutely! We offer a 14-day free trial with full access to all features and models. No credit card required to start your trial.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" data-faq="5">
+                        <span class="font-semibold text-gray-900">How does the side-by-side comparison work?</span>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content px-6 pb-4 hidden">
+                        <p class="text-gray-600">Simply enter your prompt and select multiple AI models. You'll see responses from each model side-by-side, making it easy to compare quality, style, and accuracy. You can save comparisons and export results.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ 6 -->
+                <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                    <button class="faq-toggle w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200" data-faq="6">
+                        <span class="font-semibold text-gray-900">Do you offer team plans?</span>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content px-6 pb-4 hidden">
+                        <p class="text-gray-600">Yes! We offer team plans starting at $25/user/month with collaborative workspaces, shared projects, admin controls, and priority support. Contact us for custom enterprise pricing.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Company Info -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="text-3xl font-bold gradient-text mb-4">AI Fiesta</div>
+                    <p class="text-gray-400 mb-6 max-w-md">
+                        The ultimate AI aggregator platform. Access all premium AI models in one place and save 80% on subscriptions.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.120.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.748-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.987C24.007 5.367 18.641.001.012.001z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#features" class="hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition-colors">Pricing</a></li>
+                        <li><a href="#models" class="hover:text-white transition-colors">AI Models</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API Access</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Integrations</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company -->
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Press</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-sm">© 2024 AI Fiesta. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Terms of Service</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Pricing toggle
+        document.getElementById('pricing-toggle').addEventListener('change', function() {
+            const monthlyPrice = document.getElementById('monthly-price');
+            const pricePeriod = document.getElementById('price-period');
+            const yearlySavings = document.getElementById('yearly-savings');
+
+            if (this.checked) {
+                // Yearly pricing
+                monthlyPrice.textContent = '$12';
+                pricePeriod.textContent = '/month';
+                yearlySavings.textContent = '$144/year (paid annually)';
+            } else {
+                // Monthly pricing
+                monthlyPrice.textContent = '$15';
+                pricePeriod.textContent = '/month';
+                yearlySavings.textContent = 'Save $780/year with yearly plan';
+            }
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', function() {
+                const faqId = this.getAttribute('data-faq');
+                const content = this.nextElementSibling;
+                const arrow = this.querySelector('svg');
+
+                // Close other FAQs
+                document.querySelectorAll('.faq-content').forEach(faqContent => {
+                    if (faqContent !== content) {
+                        faqContent.classList.add('hidden');
+                    }
+                });
+
+                document.querySelectorAll('.faq-toggle svg').forEach(svg => {
+                    if (svg !== arrow) {
+                        svg.classList.remove('rotate-180');
+                    }
+                });
+
+                // Toggle current FAQ
+                content.classList.toggle('hidden');
+                arrow.classList.toggle('rotate-180');
+            });
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.group, .animate-fade-in, .animate-fade-in-left, .animate-fade-in-right');
+            animatedElements.forEach(el => observer.observe(el));
+        });
+    </script>
+</body>
+</html>
