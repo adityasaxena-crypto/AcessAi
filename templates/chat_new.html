@@ -94,7 +94,7 @@
         .code-block-wrapper {
             position: relative;
             margin: 16px 0;
-            border-radius: 16px;
+            border-radius: 12px;
             background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 100%);
             border: 1px solid rgba(148, 163, 184, 0.2);
             box-shadow:
@@ -103,6 +103,8 @@
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 100%;
+            width: 100%;
         }
 
         .dark .code-block-wrapper {
@@ -125,12 +127,13 @@
         .code-header {
             background: linear-gradient(135deg, #64748b 0%, #475569 100%);
             color: #f8fafc;
-            padding: 12px 20px;
+            padding: 8px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid rgba(71, 85, 105, 0.3);
             backdrop-filter: blur(10px);
+            min-height: 36px;
         }
 
         .dark .code-header {
@@ -154,17 +157,19 @@
         .copy-button {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(59, 130, 246, 0.3);
+            min-width: auto;
+            height: 24px;
         }
 
         .copy-button:hover {
@@ -183,45 +188,40 @@
         }
 
         .copy-button svg {
-            width: 14px;
-            height: 14px;
+            width: 10px;
+            height: 10px;
+            flex-shrink: 0;
         }
 
         .message-content pre {
             margin: 0;
-            padding: 24px;
+            padding: 16px;
             background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%) !important;
             color: #e2e8f0;
             font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'SF Mono', Consolas, monospace;
-            font-size: 0.875rem;
-            line-height: 1.7;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-wrap: break-word;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            overflow-x: hidden !important;
+            overflow-y: auto;
+            white-space: pre-wrap !important;
+            word-wrap: break-word !important;
+            word-break: break-all;
             border-radius: 0;
+            max-width: 100%;
         }
 
         .dark .message-content pre {
             background: linear-gradient(145deg, #0f172a 0%, #020617 100%) !important;
         }
 
-        /* Custom scrollbar for code blocks */
+        /* Hide scrollbars for vertical rendering */
         .message-content pre::-webkit-scrollbar {
-            height: 8px;
+            display: none;
         }
 
-        .message-content pre::-webkit-scrollbar-track {
-            background: rgba(71, 85, 105, 0.2);
-            border-radius: 4px;
-        }
-
-        .message-content pre::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-            border-radius: 4px;
-        }
-
-        .message-content pre::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #475569 0%, #334155 100%);
+        .message-content pre {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         /* Language-specific icons */
